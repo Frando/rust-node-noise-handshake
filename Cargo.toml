@@ -8,4 +8,5 @@ edition = "2018"
 
 [dependencies]
 snow = { git = "https://github.com/Frando/snow.git", branch = "xchachapoly" }
+async-std = "1.4.0"
 # snow = { path = "../snow" }

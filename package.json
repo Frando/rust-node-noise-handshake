@@ -10,7 +10,9 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "noise-protocol": "^1.0.0",
+    "chalk": "^3.0.0",
+    "noise-protocol": "emilbayes/noise-protocol#standard-dh",
+    "split2": "^3.1.1",
     "tape": "^4.13.0"
   }
 }
