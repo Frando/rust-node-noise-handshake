@@ -22,7 +22,8 @@ async function handshakeXX (isInitiator, read, write) {
   const state = noise.initialize('XX', isInitiator, Buffer.alloc(0), noise.keygen())
   const txBuf = Buffer.alloc(512)
   const rxBuf = Buffer.alloc(512)
-  const payload = Buffer.alloc(0)
+
+  const payload = Buffer.from(`nodejs payload ${isInitiator ? 'responder' : 'initiator'}`)
   console.error('loc pk', fmt(state.spk))
 
   try {
@@ -42,6 +43,7 @@ async function handshakeXX (isInitiator, read, write) {
     console.error('split len', split.rx.length + split.tx.length)
     console.error('split rx', fmt(split.rx))
     console.error('split tx', fmt(split.tx))
+    console.error('remote payload', rxBuf.toString())
   } catch (e) {
     console.error('error', e)
   }

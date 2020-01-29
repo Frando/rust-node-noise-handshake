@@ -15,6 +15,10 @@ pub async fn handshake (stream: TcpStream, is_initiator: bool) -> Result<()> {
 
     let mut buf_tx = vec![0u8; 65535];
     let mut buf_rx = vec![0u8; 65535];
+    let mut rx_len;
+    let mut tx_len;
+
+    let payload = format!("rusty payload {} init", is_initiator).as_bytes().to_vec();
 
     let (mut noise, local_keypair) = build_handshake_state(is_initiator).unwrap();
     eprintln!("start handshake (rust)");
@@ -22,20 +26,20 @@ pub async fn handshake (stream: TcpStream, is_initiator: bool) -> Result<()> {
     eprintln!("loc pk {:x?}", &local_keypair.public);
 
     if is_initiator {
-        let tx_len = noise.write_message(&[], &mut buf_tx).unwrap();
+        tx_len = noise.write_message(&payload, &mut buf_tx).unwrap();
         write(&mut writer, &buf_tx[..tx_len]).await?;
     }
 
     let msg = read(&mut reader).await?;
-    let _rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
+    rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
 
-    let tx_len = noise.write_message(&[], &mut buf_tx).unwrap();
+    tx_len = noise.write_message(&payload, &mut buf_tx).unwrap();
     write(&mut writer, &buf_tx[..tx_len]).await?;
 
 
     if !is_initiator {
         let msg = read(&mut reader).await?;
-        let _rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
+        rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
     }
 
     eprintln!("handshake complete!");
@@ -46,6 +50,7 @@ pub async fn handshake (stream: TcpStream, is_initiator: bool) -> Result<()> {
     // eprintln!("remote nonce: {:x?}", remote_nonce);
     eprintln!("handshakehash len: {}", noise.get_handshake_hash().len());
     eprintln!("handshakehash: {:x?}", noise.get_handshake_hash());
+    eprintln!("remote payload: {}", String::from_utf8_lossy(&buf_rx[..rx_len]));
 
     // eprintln!("complete? {}", noise.is_handshake_finished());
 
