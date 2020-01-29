@@ -13,8 +13,8 @@ pub async fn handshake(stream: TcpStream, is_initiator: bool) -> Result<()> {
     let mut reader = BufReader::new(stream.clone());
     let mut writer = BufWriter::new(stream.clone());
 
-    let mut buf_tx = vec![0u8; 65535];
-    let mut buf_rx = vec![0u8; 65535];
+    let mut tx_buf = vec![0u8; 65535];
+    let mut rx_buf = vec![0u8; 65535];
     let mut rx_len;
     let mut tx_len;
 
@@ -29,19 +29,19 @@ pub async fn handshake(stream: TcpStream, is_initiator: bool) -> Result<()> {
     eprintln!("loc pk {:x?}", &local_keypair.public);
 
     if is_initiator {
-        tx_len = noise.write_message(&payload, &mut buf_tx).unwrap();
-        write(&mut writer, &buf_tx[..tx_len]).await?;
+        tx_len = noise.write_message(&payload, &mut tx_buf).unwrap();
+        write(&mut writer, &tx_buf[..tx_len]).await?;
     }
 
     let msg = read(&mut reader).await?;
-    rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
+    rx_len = noise.read_message(&msg, &mut rx_buf).unwrap();
 
-    tx_len = noise.write_message(&payload, &mut buf_tx).unwrap();
-    write(&mut writer, &buf_tx[..tx_len]).await?;
+    tx_len = noise.write_message(&payload, &mut tx_buf).unwrap();
+    write(&mut writer, &tx_buf[..tx_len]).await?;
 
     if !is_initiator {
         let msg = read(&mut reader).await?;
-        rx_len = noise.read_message(&msg, &mut buf_rx).unwrap();
+        rx_len = noise.read_message(&msg, &mut rx_buf).unwrap();
     }
 
     eprintln!("handshake complete!");
@@ -51,7 +51,7 @@ pub async fn handshake(stream: TcpStream, is_initiator: bool) -> Result<()> {
     eprintln!("handshakehash: {:x?}", noise.get_handshake_hash());
     eprintln!(
         "remote payload: {}",
-        String::from_utf8_lossy(&buf_rx[..rx_len])
+        String::from_utf8_lossy(&rx_buf[..rx_len])
     );
 
     Ok(())

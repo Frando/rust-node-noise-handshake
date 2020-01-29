@@ -94,7 +94,7 @@ function fmt (buf) {
 
 function reader (stream) {
   let buf = Buffer.alloc(0)
-  let missing = -1
+  let len = -1
   let msgs = []
   let emit = msg => msgs.push(msg)
 
@@ -106,7 +106,7 @@ function reader (stream) {
     }
   }))
 
-  return function next () {
+  return function read () {
     return new Promise((resolve, reject) => {
       if (msgs.length) return resolve(msgs.shift())
       emit = function (msg) {
@@ -117,15 +117,15 @@ function reader (stream) {
   }
 
   function onread () {
-    if (missing === -1 && buf.length < 2) return
-    if (missing === -1) {
-      missing = buf.slice(0, 2).readUInt16BE()
+    if (len === -1 && buf.length < 2) return
+    if (len === -1) {
+      len = buf.slice(0, 2).readUInt16BE()
       buf = buf.slice(2)
     }
-    if (missing <= buf.length) {
-      let msg = buf.slice(0, missing)
-      buf = buf.slice(missing)
-      missing = -1
+    if (len <= buf.length) {
+      let msg = buf.slice(0, len)
+      buf = buf.slice(len)
+      len = -1
       emit(msg)
       if (buf.length) process.nextTick(onread)
     }
