@@ -4,13 +4,13 @@ Let's see if Rust and NodeJS can do a [Noise](http://noiseprotocol.org/noise.htm
 
 A step towards [hypercore-protocol in Rust](https://github.com/Frando/hypercore-protocol-rust-experiments), a practical exploration of how Noise works, and a little demo of async networking in Rust with [async-std](https://async.rs/).
 
-The NodeJS part uses [noise-protocol](https://github.com/emilbayes/noise-protocol) on [the `standard-dh` branch that changes the Diffie-Hellman algorithm to follow NOISE spec](https://github.com/emilbayes/noise-protocol/tree/standard-dh).
+The NodeJS part uses [noise-protocol](https://github.com/emilbayes/noise-protocol) on [the `standard-dh` branch](https://github.com/emilbayes/noise-protocol/tree/standard-dh) that changes the Diffie-Hellman algorithm to follow NOISE spec].
 
 The Rust part uses [snow](https://github.com/mcginty/snow/pull/73) on a [PR branch that adds the XChaChaPoly cipher](https://github.com/mcginty/snow/pull/73).
 
 ## Usage
 
-First run `npm install` and `cargo build`.
+First clone this repository and run `npm install` and `cargo build`.
 
 Then launch the run.js script to spawn both a TCP server (responder) and a TCP client (initiator), in a combination of your choise (first is responder, second is initiator):
 
