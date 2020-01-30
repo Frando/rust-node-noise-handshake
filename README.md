@@ -10,7 +10,7 @@ In Rust uses [snow](https://github.com/mcginty/snow/pull/73) with a PR that adds
 
 First run `npm install` and `cargo build`.
 
-Then launch the run.js script to start both a server and a client and let them connect to each other:
+Then launch the run.js script to start both a server and a client and let them connect to each other, in a combination of your choise (first is responder, second is initiator):
 
 * `node run.js node node`
 * `node run.js rust rust`
@@ -24,4 +24,4 @@ Or start the sessions individually:
 * `cargo run -- server 8000`
 * `cargo run -- client 8000`
 
-Current state: rust/rust and node/node works. With rust/node and node/rust the client finishes correctly, the server not.
+Current state: rust/rust and node/node works. With rust/node and node/rust the client finishes correctly, the server not. **UPDATE: It works! After long debugging I found the cause - the nonces were padded differently.**
